@@ -21,7 +21,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 FONT_PATH = os.path.join(SCRIPT_DIR, "fonts", FONT_NAME)
 
 # Папка для сохранения текстур
-TEXTURES_DIR = os.path.join(SCRIPT_DIR, "textures")
+TEXTURES_DIR = os.path.join(SCRIPT_DIR, "..", "textures")
 os.makedirs(TEXTURES_DIR, exist_ok=True)
 
 # Символы Latin-1 Supplement (U+00A0 – U+00FF)
@@ -85,7 +85,7 @@ def detect_max_char_size(font):
     finded_max_height = 0
 
     # Открываем characters.txt для записи
-    characters_txt = os.path.join(SCRIPT_DIR, "characters.txt")
+    characters_txt = os.path.join(SCRIPT_DIR, "..", "characters.txt")
     with open(characters_txt, "w", encoding="utf-8") as char_file:
         for letter in ALL_CHARS:
             # Получаем Unicode код символа
@@ -135,7 +135,7 @@ max_char_img_width,  max_char_img_height = detect_max_char_size(font)
 print("max_char_img_width={0} max_char_img_height={1}".format(max_char_img_width, max_char_img_height))
 
 # Открываем characters.txt для записи
-characters_txt = os.path.join(SCRIPT_DIR, "characters.txt")
+characters_txt = os.path.join(SCRIPT_DIR, "..", "characters.txt")
 with open(characters_txt, "w", encoding="utf-8") as char_file:
     for letter in ALL_CHARS:
         # Получаем Unicode код символа
