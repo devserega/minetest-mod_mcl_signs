@@ -1,3 +1,7 @@
+util/textures
+util/vent
+util/characters.txt
+
 # Compiled Lua sources
 luac.out
 
