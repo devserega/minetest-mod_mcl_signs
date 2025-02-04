@@ -7,7 +7,7 @@ import sys
 import subprocess
 
 # Настройки шрифта и изображения
-FONT_NAME = "Arial Bold.ttf"
+FONT_NAME = "Arial Bold.ttf" # dejavu-sans-bold.ttf
 FONT_SIZE = 10 # 9 10
 IMG_WIDTH = 9 # 6
 IMG_HEIGHT = 12 # 12
@@ -122,6 +122,80 @@ def get_needed_img_size(char_file_name):
 
     return text_width, text_height
 
+def generate_char_bitmap(name, font, char_img_width, char_img_height):
+    # Создаем черно-белое изображение
+    img = Image.new("1", (char_img_width, char_img_height), 1) # Используем "1" для черно-белого режима
+
+    draw = ImageDraw.Draw(img)
+
+    # Вычисляем позицию текста
+    text_bbox = draw.textbbox((0, 0), letter, font=font)
+    real_char_img_width = text_bbox[2] - text_bbox[0]
+    real_char_img_height = text_bbox[3] - text_bbox[1]
+
+    x = (char_img_width - real_char_img_width) #// 2
+    y = 0  # Без вертикального центрирования
+
+    print("letter={0} name={1} x={2} y={3} char_img_width={4} real_char_img_width={5}".format(letter, name, x, y, char_img_width, real_char_img_width))
+
+    # Рисуем букву
+    draw.text((x, y), letter, font=font, fill=0)
+
+    img_final = Image.new("RGBA", (char_img_width, char_img_height), (0, 0, 0, 0))
+    pixels_final = img_final.load()
+
+    # Копируем пиксели из черно-белого изображения в изображение в формате RGBA
+    pixels = img.load()
+    for i in range(char_img_width):
+        for j in range(char_img_height):
+            if pixels[i, j] == 0:  # Черный пиксель (0)
+                pixels_final[i, j] = (255, 255, 255, 255)  # Прозрачный
+            else:  # Белый пиксель (1)
+                pixels_final[i, j] = (0, 0, 0, 0)  # Белый пиксель с полной непрозрачностью
+
+    # Преобразуем изображение в LA (grayscale + альфа-канал)
+    img_final = img_final.convert("LA")
+
+    return img_final
+
+def generate_char_bitmap_special(name, font, char_img_width, char_img_height):
+    # Создаем черно-белое изображение
+    img = Image.new("L", (char_img_width, char_img_height), 255)
+
+    draw = ImageDraw.Draw(img)
+
+    # Вычисляем позицию текста
+    text_bbox = draw.textbbox((0, 0), letter, font=font)
+    real_char_img_width = text_bbox[2] - text_bbox[0]
+    real_char_img_height = text_bbox[3] - text_bbox[1]
+
+    x = (char_img_width - real_char_img_width) #// 2
+    y = 0  # Без вертикального центрирования
+
+    print("letter={0} name={1} x={2} y={3} char_img_width={4} real_char_img_width={5}".format(letter, name, x, y, char_img_width, real_char_img_width))
+
+    # Рисуем букву
+    draw.text((x, y), letter, font=font, fill=0)
+
+    img = img.convert("1")
+
+    img_final = Image.new("RGBA", (char_img_width, char_img_height), (0, 0, 0, 0))
+    pixels_final = img_final.load()
+
+    # Копируем пиксели из черно-белого изображения в изображение в формате RGBA
+    pixels = img.load()
+    for i in range(char_img_width):
+        for j in range(char_img_height):
+            if pixels[i, j] == 0:  # Черный пиксель (0)
+                pixels_final[i, j] = (255, 255, 255, 255)  # Прозрачный
+            else:  # Белый пиксель (1)
+                pixels_final[i, j] = (0, 0, 0, 0)  # Белый пиксель с полной непрозрачностью
+
+    # Преобразуем изображение в LA (grayscale + альфа-канал)
+    img_final = img_final.convert("LA")
+
+    return img_final
+
 prepare_python_env()
 
 # Теперь импортируем Pillow (уже в venv)
@@ -151,46 +225,15 @@ with open(characters_txt, "w", encoding="utf-8") as char_file:
         #else:
         #    new_char_img_width = char_img_width
 
-        new_char_img_width = char_img_width
+        #new_char_img_width = char_img_width
 
-        # Создаем черно-белое изображение
-        img = Image.new("1", (new_char_img_width, max_char_img_height), 0)
-
-        draw = ImageDraw.Draw(img)
-
-        # Вычисляем позицию текста
-        text_bbox = draw.textbbox((0, 0), letter, font=font)
-        text_width = text_bbox[2] - text_bbox[0]
-        text_height = text_bbox[3] - text_bbox[1]
-
-        x = (new_char_img_width - text_width) #// 2
-        y = 0  # Без вертикального центрирования
-
-        print("letter={0} name={1} x={2} y={3} new_char_img_width={4} char_img_width={5}".format(letter, name, x, y, new_char_img_width, text_width))
-
-        # Рисуем букву
-        draw.text((x, y), letter, font=font, fill=1)
-
-        img_final = Image.new("RGBA", (new_char_img_width, max_char_img_height), (0, 0, 0, 0))
-        pixels_final = img_final.load()
-
-        # Копируем пиксели из черно-белого изображения в изображение в формате RGBA
-        pixels = img.load()
-        for i in range(new_char_img_width):
-            for j in range(max_char_img_height):
-                if pixels[i, j] == 0:  # Черный пиксель (0)
-                    pixels_final[i, j] = (0, 0, 0, 0)  # Прозрачный
-                else:  # Белый пиксель (1)
-                    pixels_final[i, j] = (255, 255, 255, 255)  # Белый пиксель с полной непрозрачностью
-
-        # Преобразуем изображение в LA (grayscale + альфа-канал)
-        img_la = img_final.convert("LA")
-
-        # Путь до изображения
-        img_path = os.path.join(TEXTURES_DIR, f"{name}.png")
+        if letter=="ї":
+            char_img = generate_char_bitmap_special(name, font, char_img_width, max_char_img_height)
+        else:
+            char_img = generate_char_bitmap(name, font, char_img_width, max_char_img_height)
 
         # Сохраняем изображение
-        img_la.save(img_path)
+        char_img.save(os.path.join(TEXTURES_DIR, f"{name}.png"))
 
         # Записываем в characters.txt
         # Формат: символ, имя файла без .png, ширина текста
