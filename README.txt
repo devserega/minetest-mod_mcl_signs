@@ -5,8 +5,8 @@
 A reworking of VoxeLibre's mcl_signs to be colorable and made to glow. Requires Luanti and VoxeLibre.
 ---
 
-Updated by Serega (devserega) @ DateTime: 03/02/25. Added supporting of cyrillic chars
 Created by Michieal (FaerRaven) @ DateTime: 10/14/22 4:05 PM
+
 
 Reworked to be an API and to allow players to color, and/or make the lettering for the signs glow (be bright at night).
 Reworked by Michieal (FaerRaven), including the sign textures batch changed to be white instead of the original black.
