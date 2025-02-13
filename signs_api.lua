@@ -4,7 +4,7 @@
 --- DateTime: 10/14/22 4:05 PM
 ---
 
-local DEBUG = true --minetest.settings:get_bool("mcl_logging_mcl_signs", false) -- special debug setting.
+local DEBUG = minetest.settings:get_bool("mcl_logging_mcl_signs", false) -- special debug setting.
 if DEBUG then
 	minetest.log("action", "[mcl_signs] Signs API Loading")
 end
